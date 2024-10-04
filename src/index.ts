@@ -12,6 +12,8 @@ import { IBroadcastChannelWrapper } from '@jupyterlite/contents';
 import { IKernel, IKernelSpecs } from '@jupyterlite/kernel';
 
 import { WebWorkerKernel } from './web_worker_kernel';
+import { Token } from '@lumino/coreutils';
+import { UnpackCondaPackages } from './unpack';
 
 function getJson(url: string) {
   const json_url = URLExt.join(PageConfig.getBaseUrl(), url);
@@ -83,5 +85,31 @@ const plugins = kernel_list.map((kernel): JupyterLiteServerPlugin<void> => {
     }
   };
 });
+export interface IUnpackPackage {
+  /**
+   * Get empack_env_meta link.
+   */
+  unpack:()=> void;
+}
 
+export const IUnpackPackageManager = new Token<IUnpackPackage>('@jupyterlite/xeus-python:IUnpackPackageManager');
+
+const unpackPackage: JupyterLiteServerPlugin<IUnpackPackage> = {
+  id: `@jupyterlite/xeus-python:unpack-conda-package`,
+  autoStart: true,
+  provides: IUnpackPackageManager,
+  activate: (): IUnpackPackage => {
+    return {
+      unpack(){ 
+        const url = "https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2";
+        const condaManager = new UnpackCondaPackages({url});
+        condaManager.fetchCondaPackage();
+      }
+    };
+  },
+};
+
+
+
+plugins.push(unpackPackage);
 export default plugins;
