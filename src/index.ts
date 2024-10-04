@@ -31,7 +31,7 @@ try {
   throw err;
 }
 
-const plugins = kernel_list.map((kernel): JupyterLiteServerPlugin<void> => {
+const plugins = kernel_list.map((kernel): JupyterLiteServerPlugin<void | IUnpackPackage> => {
   return {
     id: `@jupyterlite/xeus-${kernel}:register`,
     autoStart: true,
