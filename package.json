@@ -61,7 +61,8 @@
         "@lumino/coreutils": "^2",
         "@lumino/signaling": "^2",
         "coincident": "^1.2.3",
-        "comlink": "^4.4.1"
+        "comlink": "^4.4.1",
+        "@emscripten-forge/mambajs": "*"
     },
     "devDependencies": {
         "@jupyterlab/builder": "^4.1.0",
