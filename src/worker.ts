@@ -143,7 +143,7 @@ export class XeusRemoteKernel {
         }
         if (kernelSpec.name === 'xpython') {
           if (Object.keys(packageData).length) { 
-            let {pythonVersion, prefix} = packageData.pythonVersion;
+            let {pythonVersion, prefix} = packageData;
             if (pythonVersion) {
               await globalThis.Module['init_python_phases']( pythonVersion, prefix, verbose);
             }
