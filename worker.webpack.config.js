@@ -1,4 +1,22 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
+
+const occPath = [
+  __dirname,
+  'node_modules',
+  '@emscripten-forge/mambajs',
+  'node_modules',
+  '@emscripten-forge/untarjs',
+  'lib',
+  'unpack.wasm'
+];
+const staticPath = [
+  __dirname,
+  'jupyterlite_xeus',
+  'labextension',
+  'static',
+  '[name].wasm'
+];
 
 const rules = [
   {
@@ -48,6 +66,16 @@ module.exports = [
       rules
     },
     devtool: 'source-map',
-    resolve
+    resolve,
+    plugins: [
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.join(...occPath),
+            to: path.join(...staticPath)
+          }
+        ]
+      })
+    ]
   }
 ];
