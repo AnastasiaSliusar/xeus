@@ -1,7 +1,7 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
-const occPath = [
+const wasmPath = [
   __dirname,
   'node_modules',
   '@emscripten-forge/mambajs',
@@ -71,7 +71,7 @@ module.exports = [
       new CopyPlugin({
         patterns: [
           {
-            from: path.join(...occPath),
+            from: path.join(...wasmPath),
             to: path.join(...staticPath)
           }
         ]
