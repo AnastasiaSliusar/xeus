@@ -1,12 +1,9 @@
 name: xeus-python-kernel-docs
 channels:
-  - https://repo.mamba.pm/emscripten-forge
+  - https://repo.prefix.dev/emscripten-forge-dev
   - conda-forge
 dependencies:
   - xeus-python
-  - xeus-lua
-  - xeus-javascript
-  - xeus-nelson
   - numpy
   - matplotlib
   - pillow

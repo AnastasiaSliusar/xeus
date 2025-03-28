@@ -8,12 +8,15 @@ Currently supported kernels are:
 
 - [xeus-python](https://github.com/jupyter-xeus/xeus-python)
 - [xeus-lua](https://github.com/jupyter-xeus/xeus-lua)
+- [xeus-r](https://github.com/jupyter-xeus/xeus-r)
+- [xeus-cpp](https://github.com/compiler-research/xeus-cpp)
 - [xeus-nelson](https://github.com/jupyter-xeus/xeus-nelson)
 - [xeus-javascript](https://github.com/jupyter-xeus/xeus-javascript)
 
-We are also working on bringing [xeus-cpp](https://github.com/compiler-research/xeus-cpp) and [xeus-r](https://github.com/jupyter-xeus/xeus-r) into jupyterlite, stay tuned!
-
 Try it here!
+
+::::{tab-set}
+:::{tab-item} Python
 
 ```{eval-rst}
 .. replite::
@@ -34,13 +37,70 @@ Try it here!
    m
 ```
 
+:::
+:::{tab-item} Lua
+
 ```{eval-rst}
 .. replite::
    :kernel: xlua
    :height: 600px
+   :prompt: Try Lua!
 
    print("Hello from xeus-lua!")
 ```
+
+:::
+:::{tab-item} R
+
+```{eval-rst}
+.. replite::
+   :kernel: xr
+   :height: 600px
+   :prompt: Try R!
+
+   print("Hello from R!")
+
+   A <- matrix(c(4, 1, 1, 3), nrow = 2, byrow = TRUE)
+
+   # Eigen decomposition
+   eigen_result <- eigen(A)
+
+   print(eigen_result$values)
+
+   print(eigen_result$vectors)
+```
+
+:::
+:::{tab-item} C++
+
+```{eval-rst}
+.. replite::
+   :kernel: xcpp20
+   :height: 600px
+   :prompt: Try C++!
+
+   #include <stdio.h>
+   #include <math.h>
+
+   void funky_sin_wave(int length) {
+      for (int y = 0; y < 20; y++) {
+         for (int x = 0; x < length; x++) {
+               double wave = sin(x * 0.1);
+               if ((int)(10 + 10 * wave) == y) {
+                  printf("*");
+               } else {
+                  printf(" ");
+               }
+         }
+         printf("\n");
+      }
+   }
+
+   funky_sin_wave(80);
+```
+
+:::
+::::
 
 ## Installation
 

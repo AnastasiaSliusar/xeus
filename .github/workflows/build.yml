@@ -16,13 +16,13 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Base Setup
       uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
     - name: Install Conda environment with Micromamba
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v2
       with:
         environment-name: xeus-lite-dev
         environment-file: environment-dev.yaml
@@ -55,7 +55,7 @@ jobs:
         pip uninstall -y "jupyterlite_xeus" jupyterlab
 
     - name: Upload extension packages
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: extension-artifacts
         path: dist/jupyterlite_xeus*
@@ -69,9 +69,9 @@ jobs:
     - name: Install Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.13'
         architecture: 'x64'
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: extension-artifacts
     - name: Install and Test
@@ -81,112 +81,29 @@ jobs:
         sudo rm -rf $(which node)
         sudo rm -rf $(which node)
 
-        pip install "jupyterlab>=4.0.0,<4.3" jupyterlite_xeus*.whl
+        pip install "jupyterlab>=4.4.0.b0,<5" jupyterlite_xeus*.whl
 
         jupyter labextension list
         jupyter labextension list 2>&1 | grep -ie "@jupyterlite/xeus.*OK"
         python -m jupyterlab.browser_check --no-browser-test
 
-  python-tests-mamba-python:
+  python-tests:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: extension-artifacts
-
-      - name: Install Conda environment with Micromamba
-        uses: mamba-org/setup-micromamba@v1
-        with:
-          micromamba-version: '1.5.10-0'
-          environment-file: environment-dev.yaml
-
-      - name: Make sure the Mamba Python API is available
-        run: |
-          python -c "from mamba.api import create"
-
-      - name: Install
-        run: pip install jupyterlite_xeus*.whl
-
-      - name: Run tests
-        run: pytest -rP test_xeus.py
-        working-directory: tests
-
-  python-tests-mamba:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: extension-artifacts
-
-      - name: Install Conda environment with Micromamba
-        uses: mamba-org/setup-micromamba@v1
-        with:
-          micromamba-version: '1.5.10-0'
-          environment-file: environment-dev.yaml
-
-      - name: Install mamba
-        run: conda install -c conda-forge mamba
-
-      - name: Install
-        run: pip install jupyterlite_xeus*.whl
-
-      - name: Run tests
-        run: pytest -rP test_xeus.py
-        working-directory: tests
-
-  python-tests-micromamba:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: extension-artifacts
 
       - name: Install mamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
-          micromamba-version: '1.5.10-0'
           environment-file: environment-dev.yaml
           environment-name: xeus-lite-dev
-
-      - name: Install
-        run: pip install jupyterlite_xeus*.whl
-
-      - name: Run tests
-        run: pytest -rP test_xeus.py
-        working-directory: tests
-
-  python-tests-conda:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: extension-artifacts
-
-      - name: Install Conda environment with Micromamba
-        uses: mamba-org/setup-micromamba@v1
-        with:
-          micromamba-version: '1.5.10-0'
-          environment-file: environment-dev.yaml
 
       - name: Install
         run: pip install jupyterlite_xeus*.whl
@@ -212,18 +129,18 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Base Setup
       uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
     - name: Download extension package
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: extension-artifacts
 
     - name: Install Conda environment with Micromamba
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v2
       with:
         environment-name: test-env
         create-args: >-
@@ -232,7 +149,7 @@ jobs:
     - name: Install the extension
       run: |
         set -eux
-        python -m pip install "jupyterlab>=4.0.0,<4.3"  jupyterlite_xeus*.whl
+        python -m pip install "jupyterlab>=4.4.0.b0,<5"  jupyterlite_xeus*.whl
         python -m pip install ${{ matrix.jupyterlite_version }}
 
     - name: Install dependencies
@@ -255,9 +172,9 @@ jobs:
 
     - name: Upload Playwright Test report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: jupyterlite-xeus-playwright-tests (${{ matrix.jupyterlite_version }})
+        name: jupyterlite-xeus-playwright-tests (${{ matrix.jupyterlite_version }}, ${{ matrix.project }})
         path: |
           ui-tests/test-results
           ui-tests/playwright-report
@@ -267,6 +184,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
