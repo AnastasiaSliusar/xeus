@@ -124,6 +124,7 @@ class XeusAddon(FederatedExtensionAddon):
         # TODO Make this configurable
         # You can provide another cwd_name if you want
         self.cwd_name = self.cwd.name
+        self._channels = ["https://repo.prefix.dev/emscripten-forge-dev", "https://repo.prefix.dev/conda-forge"]
 
     def post_build(self, manager):
         if not self.environment_file:
@@ -173,6 +174,9 @@ class XeusAddon(FederatedExtensionAddon):
             yaml_content = yaml.safe_load(file)
 
         env_prefix = root_prefix / "envs" / yaml_content["name"]
+        self._channels = yaml_content.get(
+        "channels", ["https://repo.prefix.dev/emscripten-forge-dev", "https://repo.prefix.dev/conda-forge"]
+    )
 
         create_conda_env_from_env_file(root_prefix, yaml_content, env_file.parent)
 
@@ -347,6 +351,7 @@ class XeusAddon(FederatedExtensionAddon):
             host_path, mount_path = mount.split(":")
             host_path = Path(host_path)
             mount_path = Path(mount_path)
+ 
 
             if not mount_path.is_absolute() or (
                 os.name == "nt" and mount_path.anchor != "\\"
@@ -413,6 +418,10 @@ class XeusAddon(FederatedExtensionAddon):
                     actions=[(self.copy_one, [pkg_path, packages_dir / pkg_path.name])],
                 )
 
+        # add channels from env yml file
+        file_path = out_path / EMPACK_ENV_META
+        add_channel_to_json(file_path)
+
         # copy the empack_env_meta.json
         # this is individual for each kernel
         yield dict(
@@ -475,3 +484,13 @@ class XeusAddon(FederatedExtensionAddon):
                 named[ext["name"]] = ext
 
         config[FEDERATED_EXTENSIONS] = sorted(named.values(), key=lambda x: x["name"])
+
+    def add_channel_to_json(path):
+        with open(path, 'r') as f:
+            env_meta = json.load(f)
+        
+        env_meta['channel'] = self._channels
+      
+        with open(path, 'w') as f:
+            json.dump(env_meta , f, indent=4)
+
